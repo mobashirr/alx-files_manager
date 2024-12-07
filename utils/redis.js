@@ -16,9 +16,26 @@ class RedisClient {
     }
 
     // meathod to check connection state
-    async isAlive() {
-        const check = await this.client.ping()
-        return response === 'PONG';
+    isAlive() {
+        return this.client.isOpen;
+    }
+
+    // get 
+    async get(key) {
+        const value = await this.client.get(key)
+        return value
+    }
+
+    // set
+    async set(key,val, duration) {
+        const value = await this.client.set(key,val)
+        return value
+    }
+
+    // del 
+    async del(key) {
+        const result = await this.client.del(key)
+        return result
     }
 }
 
