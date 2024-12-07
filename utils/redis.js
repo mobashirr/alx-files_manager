@@ -1,43 +1,48 @@
 #!/usr/bin/node
 
-const radis = require('redis')
-
+const redis = require('redis');
 
 class RedisClient {
+  constructor() {
+    this.client = redis.createClient();
 
-    constructor() {
-        this.client = radis.createClient()
-        this.client.on('conect', () => {
-            console.log('connected to redis')
-            this.client.on('error', () => {
-                console.log('error occured')
-            })
-        })
-    }
+    this.client.on('connect', () => {
+      console.log('connected to redis');
+    });
 
-    // meathod to check connection state
-    isAlive() {
-        return this.client.isOpen;
-    }
+    this.client.on('error', (err) => {
+      console.error('Error occurred:', err);
+    });
 
-    // get 
-    async get(key) {
-        const value = await this.client.get(key)
-        return value
-    }
+    // Connect the client
+    (async () => {
+      await this.client.connect();
+    })();
+  }
 
-    // set
-    async set(key,val, duration) {
-        const value = await this.client.set(key,val)
-        return value
-    }
+  // Method to check connection state
+  isAlive() {
+    return this.client.isOpen;
+  }
 
-    // del 
-    async del(key) {
-        const result = await this.client.del(key)
-        return result
-    }
+  // Get a key
+  async get(key) {
+    const value = await this.client.get(key);
+    return value;
+  }
+
+  // Set a key with expiration
+  async set(key, val, duration) {
+    const value = await this.client.set(key, val, { EX: duration });
+    return value;
+  }
+
+  // Delete a key
+  async del(key) {
+    const result = await this.client.del(key);
+    return result;
+  }
 }
 
-
-module.exports = RedisClient
+const redisClient = new RedisClient();
+module.exports = redisClient;
