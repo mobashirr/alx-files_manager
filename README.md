@@ -7,6 +7,7 @@ the features that should be implemented
 
 - [features]($features)
 - [technology]($technology)
+- [Project Structure]($ProjectStructure)
 
 ## features
 
@@ -54,3 +55,26 @@ the features that should be implemented
   ```
   sudo systemctl status mongod
   ```
+
+## Project Structure:
+
+    ~~~
+        project/
+    ├── controllers/
+    │   └── AppController.js
+    ├── routes/
+    │   └── index.js
+    ├── utils/
+    │   ├── db.js
+    │   └── redis.js
+    ├── server.js
+    └── package.json
+
+    ~~~
+
+    the strucure is more like  MVC (Model-View-Controller) architecture
+    the request first goes to the controller layer that intract with the model layer (business layer) to get the data and then give back the data to the view layer that returns the data as response to the user
+
+    - utils module is the model layer which epresents the data and business logic
+    - controllers moudle is the controoer layer which Handles user requests and coordinates between the model and view
+    - routes module Represents the UI or the response sent back to the client.
