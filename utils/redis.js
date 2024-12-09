@@ -1,9 +1,19 @@
 #!/usr/bin/node
+
+/*
+  - in this module we create the class which has the redis client to connect to redis
+  - when importing this module you will get an instance of RedisClient class
+*/
+
 import redis from 'redis';
 
 class RedisClient {
+
   constructor() {
-    this.client = redis.createClient();
+
+    this.client = redis.createClient(
+      {url: 'redis://localhost:6379'} // default
+    ); // create redis client
 
     // Handle errors
     this.client.on('error', (err) => {
