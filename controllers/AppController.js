@@ -4,8 +4,8 @@
  * this module is the controller layer which intract with the model layer
  */
 
-const redisClient = require('../utils/redis');
-const dbClient = require('../utils/db');
+import redisClient from '../utils/redis';
+import dbClient from '../utils/db';
 
 class AppController {
     /**
@@ -16,7 +16,7 @@ class AppController {
     static getStatus(req, res) {
         res.status(200).send({
             redis: redisClient.isAlive(),
-            db: dbClient.isAlive(),
+            db: dbClient.isAlive()
         });
     }
 

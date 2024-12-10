@@ -13,6 +13,7 @@ class RedisClient {
     this.client = createClient({
       url: 'redis://localhost:6379', // default Redis URL
     });
+    this.alive = false
 
     // Handle Redis client errors
     this.client.on('error', (err) => {
@@ -20,7 +21,13 @@ class RedisClient {
     });
 
     this.client.on('connect', () => {
+      this.alive = true
       console.log('connected to redis finally')
+    })
+
+    this.client.on('end', () => {
+      this.alive = false
+      console.log('redis disconnected')
     })
     // // // Redis connection automatically happens when the client is created
     // this.client.connect()
@@ -33,8 +40,10 @@ class RedisClient {
    * @returns {boolean} - True if connected, false otherwise
    */
   isAlive() {
-    return this.client.isOpen;  // isOpen is the property indicating if the connection is alive
+    // Check if the connection is open
+    return this.alive;
   }
+  
 
   /**
    * Gets the value associated with a key
@@ -86,4 +95,4 @@ class RedisClient {
 
 // Create and export an instance of RedisClient
 const redisClient = new RedisClient();
-export default redisClient;
+module.exports = redisClient
