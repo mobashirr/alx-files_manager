@@ -1,22 +1,19 @@
 #!/usr/bin/node
 
 /**
- * in this module we create express app to create our api
+ * entry point where express app constructed
  */
 
 
-import express from 'express'
+import express from 'express';
+import routes from './routes/index';
 
+const app = express();
+app.use(express.json());
+const port = process.env.PORT || 5000;
 
-// import routes
-const endpoints = require('./routes/index.js')
+app.use('/', routes);
 
-const app = express() // express app
-app.use(express.json()) // use express json parser
-app.use('/',endpoints) // use imported routes
-const port = process.env.port || 5000 // port where express will listen to
-
-// start listening
 app.listen(port, () => {
-    console.log("Server Listening on PORT:", port);
-  });
+  console.log(`Server running on port ${port}`);
+});
