@@ -59,6 +59,32 @@ class DBClient {
         if (!this.isAlive()) return 0;
         return this.db.collection('files').countDocuments();
     }
+
+
+    /**
+     * 
+     * @param {string} email 
+     * @param {string}} pass
+     * @returns {number} document id
+     */
+    async add_user(email, pass) {
+
+        if (email, pass) {
+            const document_id = this.db.collection('users').insertOne({email:email, password:pass})
+            return document_id
+        }
+    }
+
+    /**
+     * get user with emial from database
+     * @param {string} email
+     * @returns document which is the user data
+     */
+    async get_user(email) {
+        const query = { email: email }; // Filter
+        const document = await this.db.collection('users').findOne(query)
+        return document
+    }
 }
 
 

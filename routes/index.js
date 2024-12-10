@@ -1,12 +1,17 @@
 #!/usr/bin/node
 
 import express from 'express'
+import AppController from '../controllers/AppController'
+import UsersController from '../controllers/UsersController'
 
-const AppController = require('../controllers/AppController');
 const router = express.Router();
 
 // Define routes
+
+// get routes
 router.get('/status', AppController.getStatus);
 router.get('/stats',AppController.getStats);
+// post routes
+router.post('/users', UsersController.postNew)
 
 module.exports = router;
