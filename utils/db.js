@@ -3,7 +3,7 @@
  * this module define our mongo client
  */
 
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 class DBClient {
   constructor() {
@@ -32,6 +32,21 @@ class DBClient {
 
   async nbFiles() {
     return this.dbClient.collection('files').countDocuments();
+  }
+
+  async getUserById(userid) {
+    return this.dbClient.collection('users').findOne({ _id: ObjectId(userid) });
+  }
+
+  async insertDocument(document) {
+      const result = await this.dbClient.collection('files').insertOne(document);
+      console.log("Document inserted with _id:", result.insertedId);
+      return result;
+  }
+
+  async find_document(query) {
+    const result = await this.dbClient.collection('files').findOne(query)
+    return result
   }
 }
 

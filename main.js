@@ -1,13 +1,13 @@
 
 // task 0
 
-import redisClient from './utils/db';
-import dbClient from './utils/db'
+// import redisClient from './utils/db';
+// import dbClient from './utils/db'
 
-(async () => {  
-    console.log(dbClient.nbFiles())
-    console.log(dbClient.nbUsers())
-})();
+// (async () => {  
+//     // console.log(dbClient.nbFiles())
+//     console.log(dbClient.nbUsers())
+// })();
 
 
 // task 1
@@ -93,3 +93,7 @@ import dbClient from './utils/db'
 // }
 
 // clearAll();
+
+
+// upload image 
+

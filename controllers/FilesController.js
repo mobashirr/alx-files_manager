@@ -13,6 +13,7 @@ import redisClient from '../utils/redis';
 
 class FilesController {
   static async postUpload(req, res) {
+    console.log('try to post new file')
     const token = req.headers['x-token'];
     const folderPath = process.env.FOLDER_PATH || '/tmp/files_manager';
 
@@ -76,7 +77,7 @@ class FilesController {
       }
     }
 
-    const result = await dbClient.insertDocument('files', fileData);
+    const result = await dbClient.insertDocument(fileData);
     return res.status(201).json({
       id: result.insertedId,
       userId: fileData.userId,
@@ -86,6 +87,52 @@ class FilesController {
       parentId: fileData.parentId,
     });
   }
+
+  static async getShow(req,res) {
+
+    const token = req.headers['x-token'];
+    const { name, type, isPublic, data, parentId } = req.body;
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const userId = await redisClient.get(`auth_${token}`);
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const user = await dbClient.getUserById(userId);
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const query = {
+      userId: user._id,
+      name,
+      type,
+      isPublic,
+      parentId,
+    };
+    const file = dbClient.find_document(query)
+    if (file) {
+    return res.status(200).json(file)
+  }
+    console.log('file not found')
+  }
+  static async getShow(req,res) {
+    res.status(404).json('not implemented yet')
+   }
+   static async getIndex(req,res) {
+    res.status(404).json('not implemented yet')
+   }
+   static async putPublish(req,res) {
+    res.status(404).json('not implemented yet')
+   }
+   static async putUnpublish(req,res) {
+    res.status(404).json('not implemented yet')
+   }
+   static async getFile(req,res) {
+    res.status(404).json('not implemented yet')
+   }
 }
 
 export default FilesController;
