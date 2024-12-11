@@ -88,42 +88,57 @@ class FilesController {
     });
   }
 
-  static async getShow(req,res) {
-
-    const token = req.headers['x-token'];
-    const { name, type, isPublic, data, parentId } = req.body;
-    if (!token) {
-      return res.status(401).json({ error: 'Unauthorized' });
+    // GET /files/:id
+    static async getShow(req, res) {
+      const token = req.headers['x-token'];
+      if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  
+      const userId = await redisClient.get(`auth_${token}`);
+      if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+  
+      const fileId = req.params.id;
+  
+      try {
+        const file = await dbClient.db.collection('files').findOne({ _id: ObjectId(fileId), userId });
+        if (!file) return res.status(404).json({ error: 'Not found' });
+  
+        const { _id, ...fileData } = file; // Return with "id" instead of "_id"
+        res.status(200).json({ id: _id, ...fileData });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred.' });
+      }
     }
-    const userId = await redisClient.get(`auth_${token}`);
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
+  
+    // GET /files
+    static async getIndex(req, res) {
+      const token = req.headers['x-token'];
+      if (!token) return res.status(401).json({ error: 'Unauthorized' });
+  
+      const userId = await redisClient.get(`auth_${token}`);
+      if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+  
+      const parentId = req.query.parentId || '0'; // Default to root if parentId is not provided
+      const page = parseInt(req.query.page, 10) || 0; // Default to page 0
+      const pageSize = 20;
+  
+      try {
+        const query = { userId, parentId };
+        const files = await dbClient.dbClient
+        .collection('files')
+        .find(query)
+        .skip(page * pageSize)
+        .limit(pageSize)
+        .toArray();
+  
+        const result = files.map(({ _id, ...fileData }) => ({ id: _id, ...fileData })); // Transform "_id" to "id"
+        res.status(200).json(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred.' });
+      }
     }
 
-    const user = await dbClient.getUserById(userId);
-    if (!user) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const query = {
-      userId: user._id,
-      name,
-      type,
-      isPublic,
-      parentId,
-    };
-    const file = dbClient.find_document(query)
-    if (file) {
-    return res.status(200).json(file)
-  }
-    console.log('file not found')
-  }
-  static async getShow(req,res) {
-    res.status(404).json('not implemented yet')
-   }
-   static async getIndex(req,res) {
-    res.status(404).json('not implemented yet')
-   }
    static async putPublish(req,res) {
     res.status(404).json('not implemented yet')
    }
